@@ -1,0 +1,14 @@
+{
+  "endOfLine": "auto",
+  "singleQuote": true,
+  "semi": true,
+  "overrides": [
+    {
+      "files": ["*.md"],
+      "options": {
+        "endOfLine": "lf"
+      }
+    }
+  ]
+}
+
