@@ -1,0 +1,8 @@
+{
+    "reportOptionalMemberAccess": false,
+    "reportUnknownVariableType": false,
+    "reportUnknownParameterType": false,
+    "reportUnknownMemberType": false,
+    "reportUnknownArgumentType": false,
+    "reportAny": false
+}
