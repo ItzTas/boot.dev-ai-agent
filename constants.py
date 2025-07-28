@@ -16,3 +16,4 @@ VERBOSE_FLAG: FlagSpec = {
 }
 
 MODEL = "gemini-2.0-flash-001"
+FILE_READ_MAX_CHARS = 10000
