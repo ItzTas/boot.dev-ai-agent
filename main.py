@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 from constants import MODEL
-from flags.flags import add_flags, get_flags, is_flag_active
+from functions.flags import add_flags, get_flags, is_flag_active
 
 
 def main():

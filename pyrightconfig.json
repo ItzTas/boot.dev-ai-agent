@@ -4,5 +4,6 @@
     "reportUnknownParameterType": false,
     "reportUnknownMemberType": false,
     "reportUnknownArgumentType": false,
-    "reportAny": false
+    "reportAny": false,
+    "reportUninitializedInstanceVariable": false
 }

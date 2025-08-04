@@ -1,5 +1,4 @@
 import os
-
 from functions.utils import format_dir_contents, is_outside_working_directory
 
 

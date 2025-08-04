@@ -1,7 +1,6 @@
 import argparse
 import sys
-
-from flags.types import FlagSpec
+from functions.types import FlagSpec
 
 
 def get_flags() -> dict[str, FlagSpec]:
