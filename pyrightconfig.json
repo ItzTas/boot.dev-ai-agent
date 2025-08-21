@@ -5,5 +5,7 @@
     "reportUnknownMemberType": false,
     "reportUnknownArgumentType": false,
     "reportAny": false,
-    "reportUninitializedInstanceVariable": false
+    "reportUninitializedInstanceVariable": false,
+    "reportExplicitAny": false,
+    "reportCallInDefaultInitializer": false
 }

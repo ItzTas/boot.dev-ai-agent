@@ -1,5 +1,6 @@
 from functions.get_file_content import get_file_content
 from functions.get_files_info import get_files_info
+from functions.run_python_file import run_python_file
 from functions.write_file import write_file
 
 
@@ -32,8 +33,26 @@ def test_write_file():
     print(write_file("calculator", "/tmp/temp.txt", "this should not be allowed"))
 
 
+def test_run_python_file():
+    print("Test 1")
+    print(run_python_file("calculator", "main.py"))
+
+    print("Test 2")
+    print(run_python_file("calculator", "main.py", ["3 + 5"]))
+
+    print("Test 3")
+    print(run_python_file("calculator", "tests.py"))
+
+    print("Test 4")
+    print(run_python_file("calculator", "../main.py"))
+
+    print("Test 5")
+    print(run_python_file("calculator", "nonexistent.py"))
+
+
 if __name__ == "__main__":
     # test_get_files_info()
     # test_get_file_content()
-    test_write_file()
+    # test_write_file()
+    test_run_python_file()
     pass
