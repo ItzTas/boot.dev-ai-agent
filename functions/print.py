@@ -20,4 +20,8 @@ def print_function_calls(function_calls: list[types.FunctionCall]) -> None:
     if not function_calls:
         return
     for function_call in function_calls:
-        print(f"Calling function: {function_call.name}({function_call.args})")
+        print_function_call(function_call)
+
+
+def print_function_call(function_call: types.FunctionCall) -> None:
+    print(f"Calling function: {function_call.name}({function_call.args})")

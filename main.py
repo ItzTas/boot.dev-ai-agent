@@ -2,18 +2,16 @@ import os
 import sys
 from dotenv import load_dotenv
 from google import genai
-from google.genai import types
-from constants import MODEL, SYSTEM_PROMPT
-from functions.flags import add_flags, get_flags, is_flag_active
-from functions.functions import get_available_functions
+from classes.client import Client
+from classes.function_call_processor import FunctionCallProcessor
+from functions.flags import get_arg_parser, get_flags, is_flag_active
 from functions.print import print_function_calls, print_non_verbose, print_verbose
 
 
 def main():
-    arg_parser = add_flags()
+    arg_parser = get_arg_parser()
     args = arg_parser.parse_args()
     flags = get_flags()
-    available_functions = get_available_functions()
 
     _ = load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -25,19 +23,11 @@ def main():
 
     user_prompt = args.prompt
 
-    messages = [
-        types.Content(role="user", parts=[types.Part(text=user_prompt)]),
-    ]
+    client = Client()
+    response = client.generate_first_content(user_prompt)
 
-    response = client.models.generate_content(
-        model=MODEL,
-        contents=messages,
-        config=types.GenerateContentConfig(
-            tools=[available_functions],
-            system_instruction=SYSTEM_PROMPT,
-        ),
-    )
-
+    working_directory = "calculator"
+    processor = FunctionCallProcessor(working_directory)
     if response.function_calls:
         print_function_calls(response.function_calls)
 

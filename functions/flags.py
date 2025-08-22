@@ -17,27 +17,30 @@ def get_flags() -> Flags:
     return flags
 
 
-def add_flags() -> argparse.ArgumentParser:
+def get_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
 
     _ = parser.add_argument(
         "prompt",
         type=str,
-        help="User prompt text",
+        help="User prompt",
     )
 
-    verbose_flag = get_flags()["verbose"]
+    flags = get_flags()
+    for flag_name in flags.keys():
+        flag_spec = flags[flag_name]
+        if not any(flag_name in action.option_strings for action in parser._actions):
+            _ = parser.add_argument(
+                f"--{flag_spec['name']}",
+                action=flag_spec["action"],
+                help=flag_spec["description"],
+            )
 
-    _ = parser.add_argument(
-        f"--{verbose_flag['name']}",
-        action=verbose_flag["action"],
-        help=verbose_flag["description"],
-    )
     return parser
 
 
 def is_flag_active(flag: str, parser: argparse.ArgumentParser | None = None) -> bool:
     if parser is None:
-        parser = add_flags()
+        parser = get_arg_parser()
     args = parser.parse_args(sys.argv[1:])
     return bool(getattr(args, flag, False))
