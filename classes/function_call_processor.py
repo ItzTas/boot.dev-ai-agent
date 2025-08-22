@@ -1,3 +1,4 @@
+from google.genai import types
 from google.genai.types import FunctionCall
 
 from functions.functions import get_function_schema_by_name
@@ -10,7 +11,7 @@ class FunctionCallProcessor:
     def __init__(self, working_directory: str) -> None:
         self.working_directory = working_directory
 
-    def process_function_call(self, function_call: FunctionCall):
+    def process_function_call(self, function_call: FunctionCall) -> types.Part | None:
         name = function_call.name
         if not name:
             return
@@ -25,8 +26,25 @@ class FunctionCallProcessor:
 
         print_function_call(function_call)
 
-        _ = fn(**call_args)
+        output = fn(**call_args)
+        function_response_dict = {
+            "output": output,
+            "function_name": name,
+        }
+        return types.Part(
+            function_response=types.FunctionResponse(
+                name=name,
+                response=function_response_dict,
+            ),
+        )
 
-    def process_function_calls(self, function_calls: list[FunctionCall]):
+    def process_function_calls(
+        self, function_calls: list[FunctionCall]
+    ) -> types.Content:
+        parts: list[types.Part] = []
         for function_call in function_calls:
-            self.process_function_call(function_call)
+            result = self.process_function_call(function_call)
+            if not result:
+                continue
+            parts.append(result)
+        return types.Content(role="tool", parts=parts)

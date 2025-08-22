@@ -1,11 +1,10 @@
 import os
-import sys
 from dotenv import load_dotenv
 from google import genai
 from classes.client import Client
 from classes.function_call_processor import FunctionCallProcessor
 from functions.flags import get_arg_parser, get_flags, is_flag_active
-from functions.print import print_function_calls, print_non_verbose, print_verbose
+from functions.print import print_non_verbose, print_verbose
 
 
 def main():
@@ -17,19 +16,18 @@ def main():
     api_key = os.environ.get("GEMINI_API_KEY")
     client = genai.Client(api_key=api_key)
 
-    if len(sys.argv) == 1:
-        print("must provide an argument")
-        exit(1)
-
     user_prompt = args.prompt
-
     client = Client()
     response = client.generate_first_content(user_prompt)
 
     working_directory = "calculator"
     processor = FunctionCallProcessor(working_directory)
-    if response.function_calls:
-        print_function_calls(response.function_calls)
+
+    function_calls_part = response.function_calls
+    while function_calls_part:
+        result = processor.process_function_calls(function_calls_part)
+        response = client.generate_content([result])
+        function_calls_part = response.function_calls
 
     if is_flag_active(flags["verbose"]["name"], arg_parser):
         print_verbose(

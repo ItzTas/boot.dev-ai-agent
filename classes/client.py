@@ -14,6 +14,7 @@ class Client:
     model: str
     arg_parser: ArgumentParser
     system_prompt: str
+    messages: list[types.Content]
 
     def __init__(
         self,
@@ -30,6 +31,7 @@ class Client:
 
         self.model = model
         self.system_prompt = system_prompt
+        self.messages = []
 
     def generate_first_content(
         self,
@@ -39,15 +41,35 @@ class Client:
             args = self.arg_parser.parse_args()
             user_prompt = args.prompt
 
-        messages = [
-            types.Content(role="user", parts=[types.Part(text=user_prompt)]),
-        ]
+        self.messages.append(
+            types.Content(role="user", parts=[types.Part(text=user_prompt)])
+        )
         response = self.client.models.generate_content(
             model=MODEL,
-            contents=messages,
+            contents=self.messages,
             config=types.GenerateContentConfig(
                 tools=[get_available_functions()],
                 system_instruction=SYSTEM_PROMPT,
             ),
         )
+        if response.candidates and response.candidates[0].content:
+            self.messages.append(response.candidates[0].content)
+
+        return response
+
+    def generate_content(
+        self,
+        new_messages: list[types.Content],
+    ) -> types.GenerateContentResponse:
+        self.messages.extend(new_messages)
+        response = self.client.models.generate_content(
+            model=MODEL,
+            contents=self.messages,
+            config=types.GenerateContentConfig(
+                tools=[get_available_functions()],
+                system_instruction=SYSTEM_PROMPT,
+            ),
+        )
+        if response.candidates and response.candidates[0].content:
+            self.messages.append(response.candidates[0].content)
         return response
