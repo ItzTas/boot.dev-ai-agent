@@ -1,4 +1,7 @@
 import os
+from unicodedata import name
+
+from google.genai import types
 from functions.utils import format_dir_contents, is_outside_working_directory
 
 
@@ -11,3 +14,5 @@ def get_files_info(working_directory: str, directory: str = ".") -> str:
     if not os.path.isdir(full_path):
         return f'   Error: "{directory}" is not a directory'
     return format_dir_contents(full_path)
+
+

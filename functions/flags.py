@@ -1,9 +1,9 @@
 import argparse
 import sys
-from functions.types import FlagSpec
+from functions.types import FlagSpec, Flags
 
 
-def get_flags() -> dict[str, FlagSpec]:
+def get_flags() -> Flags:
     verbose: FlagSpec = {
         "name": "verbose",
         "type": bool,
@@ -11,7 +11,9 @@ def get_flags() -> dict[str, FlagSpec]:
         "description": "Activates verbose logging",
     }
 
-    flags = {"verbose": verbose}
+    flags: Flags = {
+        "verbose": verbose,
+    }
     return flags
 
 

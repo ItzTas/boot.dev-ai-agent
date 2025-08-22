@@ -21,12 +21,14 @@ def run_python_file(
     if not full_path.endswith(".py"):
         return f'Error: "{file_path}" is not a Python file.'
 
-    args.insert(0, sys.executable)
-    args.insert(1, file_path)
+    commands = [sys.executable, full_path]
+    if args:
+        commands.extend(args)
+
     output = None
     try:
         output = subprocess.run(
-            args,
+            commands,
             timeout=30,
             capture_output=True,
             text=True,
@@ -39,12 +41,12 @@ def run_python_file(
 
 def _format_str_run_python_file(output: subprocess.CompletedProcess[str]) -> str:
     stroutput = ""
-    if output.stdout != "":
+    if output.stdout:
         stroutput += f"STDOUT: \n{output.stdout}\n"
-    if output.stderr != "":
+    if output.stderr:
         stroutput += f"STDERR: \n{output.stderr}\n"
-    if stroutput == "":
-        stroutput += "No output produced.\n"
     if output.returncode != 0:
         stroutput += f"Process exited with code {output.returncode}\n"
+    if not stroutput:
+        stroutput += "No output produced.\n"
     return stroutput
