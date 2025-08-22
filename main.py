@@ -3,14 +3,17 @@ import sys
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-from constants import MODEL
+from constants import MODEL, SYSTEM_PROMPT
 from functions.flags import add_flags, get_flags, is_flag_active
+from functions.functions import get_available_functions
+from functions.print import print_function_calls, print_non_verbose, print_verbose
 
 
 def main():
     arg_parser = add_flags()
     args = arg_parser.parse_args()
     flags = get_flags()
+    available_functions = get_available_functions()
 
     _ = load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -29,7 +32,14 @@ def main():
     response = client.models.generate_content(
         model=MODEL,
         contents=messages,
+        config=types.GenerateContentConfig(
+            tools=[available_functions],
+            system_instruction=SYSTEM_PROMPT,
+        ),
     )
+
+    if response.function_calls:
+        print_function_calls(response.function_calls)
 
     if is_flag_active(flags["verbose"]["name"], arg_parser):
         print_verbose(
@@ -38,18 +48,6 @@ def main():
         )
     else:
         print_non_verbose(user_prompt, response)
-
-
-def print_non_verbose(user_prompt: str, response: types.GenerateContentResponse):
-    print(user_prompt)
-    print(response.text)
-
-
-def print_verbose(user_prompt: str, response: types.GenerateContentResponse):
-    print(response.text)
-    print(f"User prompt: {user_prompt}")
-    print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-    print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
 
 
 if __name__ == "__main__":
